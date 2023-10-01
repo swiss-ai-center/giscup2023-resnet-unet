@@ -1,0 +1,82 @@
+stages:
+  prepare:
+    cmd: python3 src/prepare.py
+    deps:
+      - ${prepare.file_path}
+      - src/prepare.py
+      - data/raw
+    params:
+      - prepare.method
+      - prepare.${prepare.method}
+    outs:
+      - ${prepare.out}
+
+  preprocess:
+    cmd: python3 src/preprocess.py
+    deps:
+      - ${preprocess.file_path}
+      - src/preprocess.py
+      - ${prepare.out}
+    params:
+      - preprocess.method
+      - preprocess.${preprocess.method}
+    outs:
+      - ${preprocess.out}
+
+  # ------------------------------------------------------------------------
+  # Custom Processing Pipline
+  process:
+    cmd: python3 src/process_ptl_unet.py
+    deps:
+      - src/process_ptl_unet.py
+      - ${process.ptl_unet.dataset_path}
+    params:
+      - process.ptl_unet
+    outs:
+      - lightning_logs:
+          persist: true
+      - out/model.ckpt
+
+  extract:
+    cmd: python3 src/extract.py
+    deps:
+      - ${extract.file_path}
+      - src/extract.py
+      - out/model.ckpt
+    params:
+      - extract.method
+      - extract.${extract.method}
+    outs:
+      - out/lake_polygons_pred.gpkg
+
+  # ------------------------------------------------------------------------
+
+  postprocess:
+    cmd: python3 src/postprocess.py
+    deps:
+      - src/postprocess.py
+      - out/lake_polygons_pred.gpkg
+    outs:
+      - out/lake_polygons_pred_clean.gpkg
+
+  evaluate:
+    cmd: python3 src/evaluate.py
+    deps:
+      - src/evaluate.py
+      - out/lake_polygons_pred_clean.gpkg
+    params:
+      - images
+      - training_data_regions
+    plots:
+      - evaluation/plots
+    metrics:
+      - evaluation/summary.json
+
+  submission:
+    cmd: python3 src/submission.py
+    deps:
+      - src/submission.py
+      - out/lake_polygons_pred_clean.gpkg
+    outs:
+      - GPKG/lake_polygons_test.gpkg:
+          cache: false

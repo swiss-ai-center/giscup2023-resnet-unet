@@ -1,0 +1,18 @@
+# Python
+.venv
+__pycache__
+
+# OS Specific
+.DS_Store
+
+# Data
+data/raw
+data/prepared
+data/preprocessed
+out/model.ckpt
+out/lake_polygons_pred.gpkg
+out/lake_polygons_pred_clean.gpkg
+evaluation
+
+# Logs
+lightning_logs
