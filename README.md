@@ -99,19 +99,21 @@ The model is trained using the [PyTorch Lightning](https://www.pytorchlightning.
 
 #### Loss function
 
-A weighted average between the Dice Loss (https://arxiv.org/abs/1707.03237v3) and a custom blob detection loss is used.
+A weighted average between the Tversky Loss and a custom blob detection loss is used.
 
-The Dice Loss is used to ensure that the model is able to predict the correct shape of the lake. The blob detection loss is used to ensure that the model is able to detect the correct number of lakes.
+The Tversky Loss is used to ensure that the model is able to predict the correct shape of the lake. The blob detection loss is used to ensure that the model is able to detect the correct number of lakes.
 
 The combination of the two losses allows for more stable training.
 
 For an exhaustive list of the parameters used for training, please refer to the `params.yaml` file.
 
+![Loss Functions](assets/loss.png)
+
 ### Model Inference
 
 In order to create the GPKG predictions file, the model is applied to a sliding window of 448x448px with a 50% overlap.
 
-Each prediction is multiplied with a mask that is $1$ everywhere except for $\frac{1}{4}$ at 25% on the edges. This a improves the prediction quality when lakes are cut by the edges of the tiles.
+Each prediction is multiplied with a mask that is $1$ everywhere except for $0.75$ at 25% on the edges. This a improves the prediction quality when lakes are cut by the edges of the tiles.
 
 The predictions are then averaged for each pixel.
 
