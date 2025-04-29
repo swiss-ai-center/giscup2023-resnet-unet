@@ -149,15 +149,6 @@ After cloning the repository, create a virtual environment and install the depen
 
 ### 1. Create virtual environment
 
-- With [conda](https://docs.conda.io/en/latest/):
-
-  ```sh
-  conda create --name giscup python=3.11.5 pip
-  conda activate giscup
-  ```
-
-- With [venv](https://docs.python.org/3/library/venv.html):
-
   ```sh
   python3 -m venv .venv
   source .venv/bin/activate
@@ -180,13 +171,17 @@ After cloning the repository, create a virtual environment and install the depen
 
 A freeze of the dependencies can also be found in the `requirements/requirements-freeze.txt` file. Note that this depends on CUDA 11.8 with the `--extra-index-url` flag.
 
-### 3. Download data from DVC
+### 3. Download data
 
-You can pull the data from the remote storage with the following command:
+Retrieve the [original GISCUP 2023 data files](https://sigspatial2023.sigspatial.org/giscup/download.html) and place them in the `data/raw` folder.
+
+If the data is available from a remote storage, you can pull it with the following command:
 
 ```sh
 dvc pull
 ```
+
+To configure DVC for remote storage, refer to the [DVC documentation](https://dvc.org/doc).
 
 ## Reproducing the Pipeline
 
